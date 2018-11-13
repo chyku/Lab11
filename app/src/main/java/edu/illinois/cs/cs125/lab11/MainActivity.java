@@ -3,6 +3,10 @@ package edu.illinois.cs.cs125.lab11;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -24,6 +28,8 @@ public final class MainActivity extends AppCompatActivity {
     /** Request queue for our API requests. */
     private static RequestQueue requestQueue;
 
+    TextView location;
+
     /**
      * Run when this activity comes to the foreground.
      *
@@ -32,13 +38,22 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        final EditText editText = findViewById(R.id.et_search);
+        Button button = (Button) findViewById(R.id.button);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startAPICall(editText.getText().toString());
+            }
+        });
+
+        location = findViewById(R.id.tv_location);
 
         // Set up the queue for our API requests
         requestQueue = Volley.newRequestQueue(this);
 
-        setContentView(R.layout.activity_main);
-
-        startAPICall("192.17.96.8");
     }
 
     /**
@@ -88,6 +103,8 @@ public final class MainActivity extends AppCompatActivity {
             Log.d(TAG, response.toString(2));
             // Example of how to pull a field off the returned JSON object
             Log.i(TAG, response.get("hostname").toString());
+            location.setText(response.get("city").toString());
+
         } catch (JSONException ignored) { }
     }
 }
